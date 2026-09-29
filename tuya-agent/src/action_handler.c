@@ -6,7 +6,7 @@
 
 static void save_action_text(const char *text);
 static void execute_action(const cJSON *root);
-S
+
 void handle_action_execute(const tuyalink_message_t *msg)
 {
     if (msg == NULL || msg->data_string == NULL){
