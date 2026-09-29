@@ -28,7 +28,7 @@ Error_Code ubus_get_object_ids(void){
     
     int err;
 
-    err = ubus_lookup_id(g_ubus.ctx, "esp-controller", &g_ubus.system_id);
+    err = ubus_lookup_id(g_ubus.ctx, "esp-controller", &g_ubus.esp_controller_id);
 
     if(err != 0)
         return ERR_UBUS_ESP_CONTROLLER_LOOKUP;
