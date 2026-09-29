@@ -2,24 +2,27 @@
 
 CC ?= gcc
 
-TUYA_SDK ?= $(STAGING_DIR)/usr
-SDK_BUILD_DIR ?= $(TUYA_SDK)
+#TUYA_SDK ?= $(STAGING_DIR)/usr
+#SDK_BUILD_DIR ?= $(TUYA_SDK)
+
+TUYA_SDK ?= $(HOME)/Documents/Projects/tuya-iot-core-sdk-main
+SDK_BUILD_DIR ?= $(TUYA_SDK)/build
 
 CFLAGS ?= -Wall -Wextra -g -std=c11 -D_POSIX_C_SOURCE=200809L
 
 CPPFLAGS := \
-    -Isystem_info/include \
+    -Iesp-controller/include \
     -Ituya-agent/include \
     -I$(TUYA_SDK)/include \
     -I$(TUYA_SDK)/interface \
     -I$(TUYA_SDK)/utils \
     -I$(TUYA_SDK)/examples/custom_protocol_basic_demo
 
-SYSTEM_INFO_SRC := $(wildcard system_info/src/*.c)
+ESP_CONTROLLER_SRC := $(wildcard esp-controller/src/*.c)
 TUYA_AGENT_SRC := $(wildcard tuya-agent/src/*.c)
 
 SRC := \
-    $(SYSTEM_INFO_SRC) \
+    $(ESP_CONTROLLER_SRC) \
     $(TUYA_AGENT_SRC)
 
 OBJ := $(patsubst %.c,build/%.o,$(SRC))
