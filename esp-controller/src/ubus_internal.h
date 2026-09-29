@@ -3,6 +3,7 @@
 
 #include "esp_errors.h"
 #include "esp_device.h"
+#include "ubus.h"
 
 Error_Code ubus_get_devices(esp_device_t *devices, size_t *device_count);
 Error_Code ubus_pin_on(const char *port, int pin);
