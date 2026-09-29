@@ -7,27 +7,13 @@ Error parser_error_code(Error_Code code)
         case OK:
             return OK_T;
 
-        case CPU_READ_ERROR:
-        case CPU_INVALID_ERROR:
-            return ERROR_CPU_T;
-
-        case RAM_ERROR:
-            return ERROR_RAM_T;
-
-        case NETWORK_ERROR:
-            return ERROR_NETWORK_T;
-
-        case UPTIME_ERROR:
-            return ERROR_UPTIME_T;
-
         case ERR_UBUS_CONNECT:
         case ERR_UBUS_INVOKE:
         case ERR_UBUS_NOT_INITIALIZED:
             return ERROR_UBUS_INITIALIZE_T;
 
         case ERR_UBUS_SYSTEM_LOOKUP:
-        case ERR_UBUS_LAN_LOOKUP:
-        case ERR_UBUS_WAN_LOOKUP:    
+        case ERR_UBUS_ESP_CONTROLLER_LOOKUP:
             return ERROR_UBUS_DATA_T;
 
         default:
