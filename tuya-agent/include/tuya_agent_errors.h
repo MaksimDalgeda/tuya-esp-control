@@ -1,7 +1,7 @@
 #ifndef TUYA_AGENT_ERRORS_H
 #define TUYA_AGENT_ERRORS_H
 
-#include "system_info_errors.h"
+#include "esp_errors.h"
 
 typedef enum
 {

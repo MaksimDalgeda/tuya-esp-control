@@ -3,11 +3,9 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include "system_info_convertor.h"
 #include "signal_handler.h"
 #include "daemon.h"
 #include "cli_handler.h"
-#include "tuya_agent.h"
 
 
 int main(int argc, char *argv[])
@@ -54,25 +52,6 @@ int main(int argc, char *argv[])
     while(!stop)
     {
         tuya_agent_loop();
-
-        time_t now = time(NULL);
-
-        if(tuya_agent_is_connected() && now - last_send >= 5)
-        {
-            err = system_info_service(&info);
-            if(err != OK_T)
-                goto end;
-
-            err = convert_system_info(&info, &message);
-            if(err != OK_T)
-                goto end;
-
-            err = tuya_agent_send(&message);
-            if(err != OK_T)
-                goto end;
-
-            last_send = now;
-        }
 
         usleep(100000);
     }

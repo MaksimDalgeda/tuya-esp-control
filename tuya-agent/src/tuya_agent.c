@@ -5,7 +5,6 @@
 #include "tuya_agent_errors.h"
 #include "tuyalink_core.h"
 #include "tuya_cacert.h"
-#include "system_info_service.h"
 #include "action_handler.h"
 
 static tuya_mqtt_context_t client;
