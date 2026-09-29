@@ -1,0 +1,16 @@
+#ifndef ESP_ERRORS_H
+#define ESP_ERRORS_H
+
+typedef enum
+{
+    OK,
+    ERROR,
+    ERR_UBUS_CONNECT,
+    ERR_UBUS_SYSTEM_LOOKUP,
+    ERR_UBUS_ESP_CONTROLLER_LOOKUP,
+    ERR_UBUS_INVOKE,
+    ERR_UBUS_NOT_INITIALIZED
+
+} Error_Code;
+
+#endif
