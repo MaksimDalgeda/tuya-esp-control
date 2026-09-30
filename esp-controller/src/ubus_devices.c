@@ -4,8 +4,10 @@
 #include <libubus.h>
 #include <libubox/blobmsg.h>
 
-#include "ubus_internal.h"
 #include "esp_device.h"
+#include "esp_errors.h"
+#include "ubus.h"
+#include "esp_controller_service.h"
 
 enum {
     DEVICES,
@@ -50,10 +52,7 @@ typedef struct
 
 } Devices_Context;
 
-static void devices_cb(
-    struct ubus_request *req,
-    int type,
-    struct blob_attr *msg)
+static void devices_cb(struct ubus_request *req, int type, struct blob_attr *msg)
 {
     (void)type;
 
@@ -61,12 +60,7 @@ static void devices_cb(
 
     struct blob_attr *tb[__DEVICES_MAX] = {0};
 
-    blobmsg_parse(
-        devices_policy,
-        __DEVICES_MAX,
-        tb,
-        blob_data(msg),
-        blob_len(msg));
+    blobmsg_parse(devices_policy, __DEVICES_MAX, tb, blob_data(msg), blob_len(msg));
 
     if (tb[DEVICES] == NULL)
         return;
@@ -80,55 +74,38 @@ static void devices_cb(
     {
         struct blob_attr *device_tb[__DEVICE_MAX] = {0};
 
-        blobmsg_parse(
-            device_policy,
-            __DEVICE_MAX,
-            device_tb,
-            blobmsg_data(cur),
-            blobmsg_data_len(cur));
+        blobmsg_parse(device_policy, __DEVICE_MAX, device_tb, blobmsg_data(cur), blobmsg_data_len(cur));
 
         if (device_tb[DEVICE_PORT]) {
 
-            strncpy(
-                context->devices[count].port,
-                blobmsg_get_string(device_tb[DEVICE_PORT]),
-                sizeof(context->devices[count].port) - 1);
+            strncpy(context->devices[count].port, blobmsg_get_string(device_tb[DEVICE_PORT]), 
+            sizeof(context->devices[count].port) - 1);
 
-            context->devices[count].port[
-                sizeof(context->devices[count].port) - 1] = '\0';
+            context->devices[count].port[sizeof(context->devices[count].port) - 1] = '\0';
         }
 
         if (device_tb[DEVICE_VENDOR_ID]) {
 
-            strncpy(
-                context->devices[count].vendor_id,
-                blobmsg_get_string(device_tb[DEVICE_VENDOR_ID]),
-                sizeof(context->devices[count].vendor_id) - 1);
+            strncpy(context->devices[count].vendor_id,blobmsg_get_string(device_tb[DEVICE_VENDOR_ID]),
+            sizeof(context->devices[count].vendor_id) - 1);
 
-            context->devices[count].vendor_id[
-                sizeof(context->devices[count].vendor_id) - 1] = '\0';
+            context->devices[count].vendor_id[sizeof(context->devices[count].vendor_id) - 1] = '\0';
         }
 
         if (device_tb[DEVICE_PRODUCT_ID]) {
 
-            strncpy(
-                context->devices[count].product_id,
-                blobmsg_get_string(device_tb[DEVICE_PRODUCT_ID]),
+            strncpy(context->devices[count].product_id,blobmsg_get_string(device_tb[DEVICE_PRODUCT_ID]),
                 sizeof(context->devices[count].product_id) - 1);
 
-            context->devices[count].product_id[
-                sizeof(context->devices[count].product_id) - 1] = '\0';
+            context->devices[count].product_id[sizeof(context->devices[count].product_id) - 1] = '\0';
         }
-
         count++;
     }
 
     *context->device_count = count;
 }
 
-Error_Code ubus_get_devices(
-    esp_device_t *devices,
-    size_t *device_count)
+Error_Code ubus_get_devices(esp_device_t *devices, size_t *device_count)
 {
     int err;
 
@@ -149,24 +126,12 @@ Error_Code ubus_get_devices(
 
     *device_count = 0;
 
-    Devices_Context context = {
-        .devices = devices,
-        .device_count = device_count
-    };
+    Devices_Context context = {.devices = devices,.device_count = device_count};
 
-    err = ubus_invoke(
-        ubus->ctx,
-        ubus->esp_controller_id,
-        "devices",
-        NULL,
-        devices_cb,
-        &context,
-        3000);
+    err = ubus_invoke(ubus->ctx,ubus->esp_controller_id,"devices",NULL,devices_cb,&context,3000);
 
     if (err != UBUS_STATUS_OK) {
-        syslog(LOG_ERR,
-               "Failed to invoke esp-controller devices (%d)",
-               err);
+        syslog(LOG_ERR, "Failed to invoke esp-controller devices (%d)",err);
 
         return ERR_UBUS_INVOKE;
     }
