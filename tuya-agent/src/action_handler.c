@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <syslog.h>
+
 #include "action_handler.h"
 
 #define ACTION_LOG_FILE "/tmp/tuya_action.log"
