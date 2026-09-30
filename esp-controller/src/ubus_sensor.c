@@ -46,7 +46,7 @@ enum {
 static const struct blobmsg_policy data_policy[] = {
     [DATA_HUMIDITY] = {
         .name = "humidity",
-        .type = BLOBMSG_TYPE_DOUBLE,
+        .type = BLOBMSG_TYPE_INT32,
     },
 
     [DATA_TEMPERATURE] = {
@@ -100,7 +100,7 @@ static void sensor_cb(struct ubus_request *req,int type, struct blob_attr *msg)
         blobmsg_parse(data_policy, __DATA_MAX, data_tb, blobmsg_data(tb[RESPONSE_DATA]), blobmsg_data_len(tb[RESPONSE_DATA]));
 
         if (data_tb[DATA_HUMIDITY]) 
-            response->humidity =blobmsg_get_double(data_tb[DATA_HUMIDITY]);
+            response->humidity =blobmsg_get_u32(data_tb[DATA_HUMIDITY]);
 
         if (data_tb[DATA_TEMPERATURE])
             response->temperature = blobmsg_get_double(data_tb[DATA_TEMPERATURE]);
