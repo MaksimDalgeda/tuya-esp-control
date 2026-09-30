@@ -1,26 +1,33 @@
-#include <stdio.h>
+#include <string.h>
 #include <syslog.h>
 
+#include <cjson/cJSON.h>
+
 #include "action_handler.h"
+#include "esp_controller_service.h"
 
-#define ACTION_LOG_FILE "/tmp/tuya_action.log"
-
-static void save_action_text(const char *text);
 static void execute_action(const cJSON *root);
+
+static void handle_pin_on(const cJSON *input_params);
+
+static void handle_pin_off(const cJSON *input_params);
 
 void handle_action_execute(const tuyalink_message_t *msg)
 {
-    if (msg == NULL || msg->data_string == NULL){
+    if (msg == NULL || msg->data_string == NULL) {
         syslog(LOG_WARNING, "Action handler received NULL message");
         return;
     }
 
+    syslog(LOG_INFO, "Received action: %s", msg->data_string);
+
     cJSON *root = cJSON_Parse(msg->data_string);
 
-    if (root == NULL){
-        syslog(LOG_WARNING, "Failed to parse action JSON");
+    if (root == NULL) {
+        syslog(LOG_WARNING,"Failed to parse action JSON");
         return;
     }
+
     execute_action(root);
 
     cJSON_Delete(root);
@@ -28,35 +35,78 @@ void handle_action_execute(const tuyalink_message_t *msg)
 
 static void execute_action(const cJSON *root)
 {
-    cJSON *input_params = cJSON_GetObjectItem(root, "inputParams");
+    cJSON *action_code = cJSON_GetObjectItem(root,"actionCode");
 
-    if (input_params == NULL){
-        syslog(LOG_WARNING, "Action does not contain inputParams");
+    if (!cJSON_IsString(action_code)) {
+        syslog(LOG_WARNING,"Action does not contain actionCode");
         return;
     }
 
-    cJSON *text = cJSON_GetObjectItem(input_params, "text");
+    cJSON *input_params = cJSON_GetObjectItem(root, "inputParams");
 
-    if (!cJSON_IsString(text)){
-        syslog(LOG_WARNING, "Action text parameter error");
+    if (input_params == NULL) {
+        syslog(LOG_WARNING,"Action does not contain inputParams");
+        return;
+    }
+
+    syslog(LOG_INFO, "Executing action: %s",action_code->valuestring);
+
+    if (strcmp(action_code->valuestring,"PinOn") == 0)
+        handle_pin_on(input_params);
+    
+    else if (strcmp(action_code->valuestring, "PinOff") == 0)
+        handle_pin_off(input_params);
+    else
+        syslog(LOG_WARNING, "Unknown action: %s", action_code->valuestring);
+}
+
+static void handle_pin_on(const cJSON *input_params)
+{
+    cJSON *port = cJSON_GetObjectItem(input_params,"port");
+    cJSON *pin = cJSON_GetObjectItem(input_params,"pin");
+
+    if (!cJSON_IsString(port) || !cJSON_IsNumber(pin)) {
+        syslog(LOG_WARNING,"PinOn invalid parameters");
+        return;
+    }
+
+    esp_response_t response;
+    Error_Code err = esp_controller_turn_pin_on(port->valuestring, pin->valueint,&response);
+
+    if (err != OK) {
+        syslog(LOG_ERR, "PinOn failed (%d)", err);
+        return;
+    }
+
+    if (response.error_code != 0) {
+        syslog(LOG_ERR, "PinOn error: %s (%d)", response.error_message, response.error_code);
+        return;
+    }
+    syslog(LOG_INFO, "PinOn success: %s", response.msg);
+}
+
+static void handle_pin_off(const cJSON *input_params)
+{
+    cJSON *port =cJSON_GetObjectItem(input_params, "port");
+    cJSON *pin = cJSON_GetObjectItem(input_params, "pin");
+
+    if (!cJSON_IsString(port) || !cJSON_IsNumber(pin)) {
+        syslog(LOG_WARNING, "PinOff invalid parameters");
+        return;
+    }
+
+    esp_response_t response;
+    Error_Code err = esp_controller_turn_pin_off(port->valuestring, pin->valueint, &response);
+
+    if (err != OK) {
+        syslog(LOG_ERR, "PinOff failed (%d)",err);
+        return;
+    }
+
+    if (response.error_code != 0) {
+        syslog(LOG_ERR, "PinOff error: %s (%d)", response.error_message, response.error_code);
         return;
     }
     
-    save_action_text(text->valuestring);
-}
-
-static void save_action_text(const char *text)
-{
-    FILE *fp = fopen(ACTION_LOG_FILE, "a");
-
-    if (fp == NULL){
-        syslog(LOG_ERR, "Failed to open %s", ACTION_LOG_FILE);
-        return;
-    }
-
-    fprintf(fp, "%s\n", text);
-
-    syslog(LOG_INFO, "Action received: %s", text);
-
-    fclose(fp);
+    syslog(LOG_INFO, "PinOff success: %s",response.msg);
 }
