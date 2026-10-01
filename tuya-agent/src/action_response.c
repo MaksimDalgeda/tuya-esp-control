@@ -17,5 +17,5 @@ void send_action_response(const tuyalink_message_t *request, const char *respons
 
     int ret = tuyalink_message_send(tuya_agent_get_context(), &response);
 
-    return
+    return;
 }
