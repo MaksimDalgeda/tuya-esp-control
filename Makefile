@@ -2,11 +2,8 @@
 
 CC ?= gcc
 
-#TUYA_SDK ?= $(STAGING_DIR)/usr
-#SDK_BUILD_DIR ?= $(TUYA_SDK)
-
-TUYA_SDK ?= $(HOME)/Documents/Projects/tuya-iot-core-sdk-main
-SDK_BUILD_DIR ?= $(TUYA_SDK)/build
+TUYA_SDK ?= $(STAGING_DIR)/usr
+SDK_BUILD_DIR ?= $(TUYA_SDK)
 
 CFLAGS ?= -Wall -Wextra -g -std=c11 -D_POSIX_C_SOURCE=200809L
 
@@ -47,7 +44,6 @@ $(TARGET): $(OBJ)
 		-lpthread \
 		-lubus \
 		-lubox \
-		-luci \
 		-lblobmsg_json \
 		-lcjson \
 		-lm \
