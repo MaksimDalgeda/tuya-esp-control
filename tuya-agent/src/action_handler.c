@@ -165,39 +165,19 @@ static void handle_read_sensor(const cJSON *input_params)
 
     dht_response_t response;
 
-    Error_Code err = esp_controller_read_sensor(port->valuestring, pin->valueint, model->valuestring,
-            sensor->valuestring,
-            &response);
+    Error_Code err = esp_controller_read_sensor(port->valuestring, pin->valueint, model->valuestring, sensor->valuestring, &response);
 
-    if (err != OK)
-    {
-        syslog(
-            LOG_ERR,
-            "ReadSensor failed (%d)",
-            err);
-
+    if (err != OK){
+        syslog(LOG_ERR, "ReadSensor failed (%d)", err);
         return;
     }
 
-    if (response.error_code != 0)
-    {
-        syslog(
-            LOG_ERR,
-            "ReadSensor error: %s (%d)",
-            response.error_message,
-            response.error_code);
-
+    if (response.error_code != 0){
+        syslog(LOG_ERR, "ReadSensor error: %s (%d)", response.error_message, response.error_code);
         return;
     }
 
-    syslog(
-        LOG_INFO,
-        "ReadSensor success: %s",
-        response.msg);
+    syslog(LOG_INFO, "ReadSensor success: %s", response.msg);
 
-    syslog(
-        LOG_INFO,
-        "Temperature: %.1f C, Humidity: %.1f %%",
-        response.temperature,
-        response.humidity);
+    syslog(LOG_INFO, "Temperature: %.1f C, Humidity: %.1f %%", response.temperature, response.humidity);
 }
