@@ -24,7 +24,7 @@ SRC := \
 
 OBJ := $(patsubst %.c,build/%.o,$(SRC))
 
-TARGET := build/tuya-monitor-daemon
+TARGET := build/tuya-esp-daemon
 
 all: $(TARGET)
 
