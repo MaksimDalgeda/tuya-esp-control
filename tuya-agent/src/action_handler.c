@@ -90,7 +90,7 @@ static void handle_pin_on(const tuyalink_message_t *msg, const cJSON *input_para
         syslog(LOG_ERR, "PinOn error: %s (%d)", response.error_message, response.error_code);
         
         char json[256];
-        snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.msg);
+        snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.error_message);
         send_action_response(msg, json);
 
         return;
@@ -98,7 +98,7 @@ static void handle_pin_on(const tuyalink_message_t *msg, const cJSON *input_para
     syslog(LOG_INFO, "PinOn success: %s", response.msg);
 
     char json[256];
-    snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.msg);
+    snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.error_message);
     send_action_response(msg, json);
 
     return;
@@ -126,17 +126,17 @@ static void handle_pin_off(const tuyalink_message_t *msg, const cJSON *input_par
         syslog(LOG_ERR, "PinOff error: %s (%d)", response.error_message, response.error_code);
 
         char json[256];
-        snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.msg);
+        snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.error_message);
         send_action_response(msg, json);
 
         return;
     }
     
-    syslog(LOG_INFO, "PinOff success: %s",response.msg);
+    syslog(LOG_INFO, "PinOff success: %s",response.error_message);
 
     char json[256];
 
-    snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.msg);
+    snprintf(json, sizeof(json), "{" "\"outputParams\":{" "\"Message\":\"%s\"" "}" "}", response.error_message);
     send_action_response(msg, json);
     return;
 
