@@ -83,4 +83,3 @@ Error_Code esp_controller_read_sensor(const char *port, int pin, const char *mod
     }
     return OK;
 }
-
