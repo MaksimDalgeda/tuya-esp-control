@@ -39,6 +39,7 @@ $(TARGET): $(OBJ)
 	@mkdir -p $(dir $@)
 	$(CC) $(OBJ) \
 		-L$(SDK_BUILD_DIR)/lib \
+		-Wl,-rpath,$(SDK_BUILD_DIR)/lib \
 		-llink_core \
 		-lmiddleware_implementation \
 		-lplatform_port \
@@ -55,10 +56,9 @@ $(TARGET): $(OBJ)
 run: all
 	LD_LIBRARY_PATH=$(SDK_BUILD_DIR)/lib:$$LD_LIBRARY_PATH \
 	./$(TARGET) \
-		--device-id DEVICEID\
-		--device-secret DEVICESECRET \
-		--product-id PRODUCTID \
-		--daemon
+		--device-id 2630971166afe6a35f7yph\
+		--device-secret uUQgkqABDcHHKzUi \
+		--product-id l3ydtvg3stqqf7io \
 
 clean:
 	rm -rf build

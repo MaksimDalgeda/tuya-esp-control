@@ -113,6 +113,11 @@ Error tuya_agent_connect(void)
     return OK_T;
 }
 
+tuya_mqtt_context_t *tuya_agent_get_context(void)
+{
+    return &client;
+}
+
 void tuya_agent_loop(void)
 {
     tuya_mqtt_loop(&client);
