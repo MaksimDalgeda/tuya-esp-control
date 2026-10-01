@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     syslog(LOG_INFO, "Connected to ESP Controller");
 
 
-    /* TEST BLOCK */
+    /* TEST BLOCK
 
     esp_device_t devices[10];
     size_t count = 0;
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         sensor.humidity,
         sensor.temperature);
 
-    /* TEST BLOCK END */
+     TEST BLOCK END */
 
     while (!stop) {
         tuya_agent_loop();
