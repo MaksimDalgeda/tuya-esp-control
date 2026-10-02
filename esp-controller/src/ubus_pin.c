@@ -66,11 +66,18 @@ static void response_cb(struct ubus_request *req, int type,struct blob_attr *msg
     }
 
     if (tb[RESPONSE_MSG]) {
-        strncpy(response->msg, blobmsg_get_string(tb[RESPONSE_MSG]), 
-            sizeof(response->msg) - 1);
-        response->msg[
-            sizeof(response->msg) - 1] = '\0';
+        strncpy(response->msg, blobmsg_get_string(tb[RESPONSE_MSG]), sizeof(response->msg) - 1);
+        
+        response->msg[sizeof(response->msg) - 1] = '\0';
     }
+
+      if (response->rc != 0) {
+
+            response->error_code = response->rc;
+
+            strncpy(response->error_message, response->msg, sizeof(response->error_message) - 1);
+            response->error_message[sizeof(response->error_message) - 1] = '\0';
+        }
 
     if (tb[RESPONSE_ERROR]) {
 
@@ -88,8 +95,7 @@ static void response_cb(struct ubus_request *req, int type,struct blob_attr *msg
             strncpy(response->error_message, blobmsg_get_string(error_tb[ERROR_MESSAGE]),
                 sizeof(response->error_message) - 1);
 
-            response->error_message[
-                sizeof(response->error_message) - 1] = '\0';
+            response->error_message[sizeof(response->error_message) - 1] = '\0';
         }
     }
 }
@@ -133,7 +139,7 @@ Error_Code ubus_pin_off(const char *port,int pin, esp_response_t *response)
 
     blobmsg_add_u32(&b,"pin", pin);
 
-    int*err = ubus_invoke(ubus->ctx, ubus->esp_controller_id, "off", b.head, response_cb, response, 3000);
+    int err = ubus_invoke(ubus->ctx, ubus->esp_controller_id, "off", b.head, response_cb, response, 3000);
 
     blob_buf_free(&b);
 
