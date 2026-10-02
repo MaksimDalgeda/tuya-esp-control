@@ -52,9 +52,9 @@ $(TARGET): $(OBJ)
 run: all
 	LD_LIBRARY_PATH=$(SDK_BUILD_DIR)/lib:$$LD_LIBRARY_PATH \
 	./$(TARGET) \
-		--device-id 2630971166afe6a35f7yph\
-		--device-secret uUQgkqABDcHHKzUi \
-		--product-id l3ydtvg3stqqf7io \
+		--device-id 'DEVICE_ID'\
+		--device-secret 'DEVICE_SECRET' \
+		--product-id 'PRODUCT_ID' \
 
 clean:
 	rm -rf build
